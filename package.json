@@ -22,6 +22,10 @@
       {
         "command": "create-readme-openai.create-readme",
         "title": "Create README"
+      },
+      {
+        "command": "create-readme-openai.set-api-key",
+        "title": "Set API Key"
       }
     ],
     "configuration": {
