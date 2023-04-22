@@ -41,6 +41,16 @@ export const generateReadme = async (
     }
   }
 };
+/**
+ * APIキーの保存
+ * @param yourKey
+ */
+const save_api_key = async (yourKey: string) => {
+  await vscode.workspace
+    .getConfiguration("create-readme-openai")
+    .update("apiKey", yourKey, vscode.ConfigurationTarget.Global);
+  vscode.window.showInformationMessage("API Key saved to settings.");
+};
 
 export function activate(context: vscode.ExtensionContext) {
   /**
@@ -68,10 +78,7 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         } else {
           // 入力されたAPIキーを設定に保存する
-          await vscode.workspace
-            .getConfiguration("create-readme-openai")
-            .update("apiKey", yourKey, vscode.ConfigurationTarget.Global);
-          vscode.window.showInformationMessage("API Key saved to settings.");
+          await save_api_key(yourKey);
         }
       }
 
@@ -93,9 +100,13 @@ export function activate(context: vscode.ExtensionContext) {
           },
         ];
 
-        const selectedModel = await vscode.window.showQuickPick(modelQuickPickItems, {
-          placeHolder: "Select your OpenAI model.",
-        });
+
+        const selectedModel = await vscode.window.showQuickPick(
+          modelQuickPickItems,
+          {
+            placeHolder: "Select your OpenAI model.",
+          }
+        );
 
         // 選択がキャンセルされた場合
         if (!selectedModel) {
@@ -109,6 +120,7 @@ export function activate(context: vscode.ExtensionContext) {
           await vscode.workspace
             .getConfiguration("create-readme-openai")
             .update("model", modelName, vscode.ConfigurationTarget.Global);
+
           vscode.window.showInformationMessage("Model selected and saved to settings.");
         }
       }
@@ -120,7 +132,9 @@ export function activate(context: vscode.ExtensionContext) {
       openai = new OpenAIApi(configuration);
 
       const fileName = "README.md";
-      const exportFilePath = `${vscode.workspace.workspaceFolders?.[0].uri.path.substring(1)}/${fileName}`;
+      const exportFilePath = `${vscode.workspace.workspaceFolders?.[0].uri.path.substring(
+        1
+      )}/${fileName}`;
 
       const options = {
         canSelectMany: false,
@@ -168,9 +182,23 @@ export function activate(context: vscode.ExtensionContext) {
       );
       }
   );
-      context.subscriptions.push(create);
-    
-  }
+
+  /**
+   * APIキー設定
+   */
+  const setAPIKey = vscode.commands.registerCommand(
+    "create-readme-openai.set-api-key",
+    async () => {
+      const yourKey = await vscode.window.showInputBox({
+        prompt: "Enter your OpenAI API Key.",
+      });
+      await save_api_key(yourKey ?? "");
+    }
+  );
+
+  context.subscriptions.push(create); // イベント追加
+  context.subscriptions.push(setAPIKey); // イベント追加
+}
 
 // This method is called when your extension is deactivated
 

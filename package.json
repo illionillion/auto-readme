@@ -2,7 +2,7 @@
   "name": "create-readme-openai",
   "displayName": "create-readme-openai",
   "description": "Create README By OpenAI",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "engines": {
     "vscode": "^1.77.0"
   },
@@ -22,6 +22,10 @@
       {
         "command": "create-readme-openai.create-readme",
         "title": "Create README"
+      },
+      {
+        "command": "create-readme-openai.set-api-key",
+        "title": "Set API Key"
       }
     ],
     "configuration": {
