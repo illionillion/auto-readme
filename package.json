@@ -12,13 +12,25 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+
     "commands": [
       {
         "command": "create-readme-openai.create-readme",
         "title": "Create README"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Create README OpenAI",
+      "properties": {
+        "create-readme-openai.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your OpenAI API Key"
+        }
+      }
+    }
   },
+  
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
