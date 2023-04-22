@@ -61,7 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
       openai = new OpenAIApi(configuration);
 
       const fileName = "README.md";
-      const exportFilePath = `${vscode.workspace.workspaceFolders?.[0].uri.path}/${fileName}`;
+      const exportFilePath = `${vscode.workspace.workspaceFolders?.[0].uri.path.substring(1)}/${fileName}`;
 
       const options = {
         canSelectMany: false,
