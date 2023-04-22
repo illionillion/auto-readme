@@ -26,6 +26,7 @@ export const generateReadme = async (
 };
 
 export function activate(context: vscode.ExtensionContext) {
+  console.log("key:" + process.env.OPENAI_API_KEY); // なぜかundefined
   /**
    * README作成
    */
