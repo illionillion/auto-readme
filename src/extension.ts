@@ -5,21 +5,41 @@ import {
   Configuration,
   OpenAIApi,
 } from "openai";
+import { AxiosError } from "axios";
+
+
+function isAxiosError(error: unknown): error is AxiosError {
+  return (error as AxiosError)?.isAxiosError === true;
+}
 
 let openai: OpenAIApi | undefined = undefined;
 
 export const generateReadme = async (
   content: string,
-  model = "gpt-3.5-turbo-0301",
+  model = "gpt-3.5-turbo",
   role: ChatCompletionRequestMessageRoleEnum = "user"
 ) => {
-  const response = await openai?.createChatCompletion({
-    model: model,
-    messages: [{ role: role, content: content }],
-  });
+  try {
+    const response = await openai?.createChatCompletion({
+      model: model,
+      messages: [{ role: role, content: content }],
+    });
 
-  const answer = response?.data.choices[0].message?.content;
-  return answer;
+    const answer = response?.data.choices[0].message?.content;
+    return { success: true, content: answer };
+  } catch (error) {
+    if (isAxiosError(error) && error?.response?.status === 403) {
+      return {
+        success: false,
+        content: "An error occurred during the request. Please try again.",
+      };
+    } else {
+      return {
+        success: false,
+        content: "An error occurred during the request. Plese check your API key and model",
+      };
+    }
+  }
 };
 /**
  * APIキーの保存
@@ -34,7 +54,7 @@ const save_api_key = async (yourKey: string) => {
 
 export function activate(context: vscode.ExtensionContext) {
   /**
-   * README作成
+   * README作成A
    */
   const create = vscode.commands.registerCommand(
     "create-readme-openai.create-readme",
@@ -80,6 +100,7 @@ export function activate(context: vscode.ExtensionContext) {
           },
         ];
 
+
         const selectedModel = await vscode.window.showQuickPick(
           modelQuickPickItems,
           {
@@ -99,11 +120,11 @@ export function activate(context: vscode.ExtensionContext) {
           await vscode.workspace
             .getConfiguration("create-readme-openai")
             .update("model", modelName, vscode.ConfigurationTarget.Global);
-          vscode.window.showInformationMessage(
-            "Model selected and saved to settings."
-          );
+
+          vscode.window.showInformationMessage("Model selected and saved to settings.");
         }
       }
+
 
       const configuration = new Configuration({
         apiKey: yourKey,
@@ -142,20 +163,24 @@ export function activate(context: vscode.ExtensionContext) {
         async (progress) => {
           progress.report({ increment: 0 });
           const result = await generateReadme(content, modelName);
-          writeFile(exportFilePath, result ?? "", (err) => {
-            if (err) {
-              vscode.window.showErrorMessage(
-                `Failed to create file: ${err.message}`
+          if (result.success) {
+            writeFile(exportFilePath, result.content ?? "", (err) => {
+              if (err) {
+                vscode.window.showErrorMessage(
+                  `Failed to create file: ${err.message}`
+                );
+                return;
+              }
+              vscode.window.showInformationMessage(
+                `File ${fileName} created successfully!`
               );
-              return;
-            }
-            vscode.window.showInformationMessage(
-              `File ${fileName} created successfully!`
-            );
-          });
+            });
+          } else {
+            vscode.window.showErrorMessage(result.content ?? "");
+          }
         }
       );
-    }
+      }
   );
 
   /**
@@ -176,4 +201,5 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+
+export function deactivate() { }
