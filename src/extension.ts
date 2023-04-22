@@ -25,7 +25,7 @@ export const generateReadme = async (
   return answer;
 };
 export function activate(context: vscode.ExtensionContext) {
-    console.log("key:" + process.env.OPENAI_API_KEY); // なぜかundefined
+  console.log("key:" + process.env.OPENAI_API_KEY); // なぜかundefined
   /**
    * README作成
    */
@@ -35,12 +35,12 @@ export function activate(context: vscode.ExtensionContext) {
       const yourKey = await vscode.window.showInputBox({
         prompt: "Enter your Key.",
       });
-	  if (!yourKey) {
+      if (!yourKey) {
         vscode.window.showErrorMessage("No Enter your Key!");
         return;
       }
       const configuration = new Configuration({
-        apiKey: yourKey
+        apiKey: yourKey,
       });
       openai = new OpenAIApi(configuration);
 
