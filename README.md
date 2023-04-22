@@ -16,3 +16,22 @@
 
 ## 参照
 このVSCode拡張機能は、OpenAIのAPIを使用しています。詳細については、[OpenAI API](https://beta.openai.com/)をご覧ください。
+
+# README
+This VSCode extension is created to generate a README for source code files using the OpenAI API.
+
+## Features
+- When you select a source code file, a README.md file is generated based on the content of the file.
+- The generateReadme function uses the OpenAI API to automatically create the content of the README.
+- You can generate the README using the command create-readme-openai.create-readme.
+
+## Usage
+1. Obtain your OpenAI API key.
+2. Open the file.
+3. Press Ctrl + Shift + P (Windows), Command + Shift + P (Mac) to open the command palette.
+4. Type in create-readme-openai.create-readme to generate the README.
+5. Enter your OpenAI API key.
+6. The README.md file is automatically generated.
+
+## References
+This VSCode extension uses OpenAI's API. For more information, please visit [OpenAI API](https://beta.openai.com/).
