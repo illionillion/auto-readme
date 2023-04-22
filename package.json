@@ -6,6 +6,10 @@
   "engines": {
     "vscode": "^1.77.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/illionillion/create-readme-openai.git"
+  },
   "categories": [
     "Other"
   ],
