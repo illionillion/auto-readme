@@ -24,6 +24,7 @@ export const generateReadme = async (
   console.log(answer);
   return answer;
 };
+
 export function activate(context: vscode.ExtensionContext) {
   console.log("key:" + process.env.OPENAI_API_KEY); // なぜかundefined
   /**
@@ -64,20 +65,32 @@ export function activate(context: vscode.ExtensionContext) {
       const filecontent = readFileSync(targetfilePath, "utf-8");
       console.log(filecontent);
 
-      const content = `以下のソースコードのREADMEを作成してください。\n${filecontent}`;
+      const content = `以下のソースコードのREADMEを日本語で作成してください。\n${filecontent}`;
       console.log(content);
-      const result = await generateReadme(content);
-      writeFile(exportFilePath, result ?? "", (err) => {
-        if (err) {
-          vscode.window.showErrorMessage(
-            `Failed to create file: ${err.message}`
-          );
-          return;
+
+      // Progress message
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: "Creating README...",
+          cancellable: false,
+        },
+        async (progress) => {
+          progress.report({ increment: 0 });
+          const result = await generateReadme(content);
+          writeFile(exportFilePath, result ?? "", (err) => {
+            if (err) {
+              vscode.window.showErrorMessage(
+                `Failed to create file: ${err.message}`
+              );
+              return;
+            }
+            vscode.window.showInformationMessage(
+              `File ${fileName} created successfully!`
+            );
+          });
         }
-        vscode.window.showInformationMessage(
-          `File ${fileName} created successfully!`
-        );
-      });
+      );
     }
   );
 
