@@ -5,26 +5,46 @@ import {
   Configuration,
   OpenAIApi,
 } from "openai";
+import { AxiosError } from "axios";
+
+
+function isAxiosError(error: unknown): error is AxiosError {
+  return (error as AxiosError)?.isAxiosError === true;
+}
 
 let openai: OpenAIApi | undefined = undefined;
 
 export const generateReadme = async (
   content: string,
-  model = "gpt-3.5-turbo-0301",
+  model = "gpt-3.5-turbo",
   role: ChatCompletionRequestMessageRoleEnum = "user"
 ) => {
-  const response = await openai?.createChatCompletion({
-    model: model,
-    messages: [{ role: role, content: content }],
-  });
+  try {
+    const response = await openai?.createChatCompletion({
+      model: model,
+      messages: [{ role: role, content: content }],
+    });
 
-  const answer = response?.data.choices[0].message?.content;
-  return answer;
+    const answer = response?.data.choices[0].message?.content;
+    return { success: true, content: answer };
+  } catch (error) {
+    if (isAxiosError(error) && error?.response?.status === 403) {
+      return {
+        success: false,
+        content: "An error occurred during the request. Please try again.",
+      };
+    } else {
+      return {
+        success: false,
+        content: "An error occurred during the request. Plese check your API key and model",
+      };
+    }
+  }
 };
 
 export function activate(context: vscode.ExtensionContext) {
   /**
-   * README作成
+   * README作成A
    */
   const create = vscode.commands.registerCommand(
     "create-readme-openai.create-readme",
@@ -56,42 +76,42 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       // モデル名を設定から取得
-  let modelName = vscode.workspace
-  .getConfiguration("create-readme-openai")
-  .get("model") as string | undefined;
+      let modelName = vscode.workspace
+        .getConfiguration("create-readme-openai")
+        .get("model") as string | undefined;
 
-// モデル名が設定されていない場合、実行時に選択を求める
-if (!modelName) {
-  const modelQuickPickItems: vscode.QuickPickItem[] = [
-    {
-      label: "gpt-3.5-turbo",
-      description: "GPT-3.5 Turbo model",
-    },
-    {
-      label: "gpt-4",
-      description: "gpt-4 model",
-    },
-  ];
+      // モデル名が設定されていない場合、実行時に選択を求める
+      if (!modelName) {
+        const modelQuickPickItems: vscode.QuickPickItem[] = [
+          {
+            label: "gpt-3.5-turbo",
+            description: "GPT-3.5 Turbo model",
+          },
+          {
+            label: "gpt-4",
+            description: "gpt-4 model",
+          },
+        ];
 
-  const selectedModel = await vscode.window.showQuickPick(modelQuickPickItems, {
-    placeHolder: "Select your OpenAI model.",
-  });
+        const selectedModel = await vscode.window.showQuickPick(modelQuickPickItems, {
+          placeHolder: "Select your OpenAI model.",
+        });
 
-  // 選択がキャンセルされた場合
-  if (!selectedModel) {
-    vscode.window.showErrorMessage(
-      "No model selected! Please set your OpenAI model in the settings or select it when prompted."
-    );
-    return;
-  } else {
-    // 選択されたモデル名を設定に保存する
-    modelName = selectedModel.label;
-    await vscode.workspace
-      .getConfiguration("create-readme-openai")
-      .update("model", modelName, vscode.ConfigurationTarget.Global);
-    vscode.window.showInformationMessage("Model selected and saved to settings.");
-  }
-}
+        // 選択がキャンセルされた場合
+        if (!selectedModel) {
+          vscode.window.showErrorMessage(
+            "No model selected! Please set your OpenAI model in the settings or select it when prompted."
+          );
+          return;
+        } else {
+          // 選択されたモデル名を設定に保存する
+          modelName = selectedModel.label;
+          await vscode.workspace
+            .getConfiguration("create-readme-openai")
+            .update("model", modelName, vscode.ConfigurationTarget.Global);
+          vscode.window.showInformationMessage("Model selected and saved to settings.");
+        }
+      }
 
 
       const configuration = new Configuration({
@@ -129,24 +149,29 @@ if (!modelName) {
         async (progress) => {
           progress.report({ increment: 0 });
           const result = await generateReadme(content, modelName);
-          writeFile(exportFilePath, result ?? "", (err) => {
-            if (err) {
-              vscode.window.showErrorMessage(
-                `Failed to create file: ${err.message}`
+          if (result.success) {
+            writeFile(exportFilePath, result.content ?? "", (err) => {
+              if (err) {
+                vscode.window.showErrorMessage(
+                  `Failed to create file: ${err.message}`
+                );
+                return;
+              }
+              vscode.window.showInformationMessage(
+                `File ${fileName} created successfully!`
               );
-              return;
-            }
-            vscode.window.showInformationMessage(
-              `File ${fileName} created successfully!`
-            );
-          });
+            });
+          } else {
+            vscode.window.showErrorMessage(result.content ?? "");
+          }
         }
       );
-    }
+      }
   );
-
-  context.subscriptions.push(create);
-}
+      context.subscriptions.push(create);
+    
+  }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+
+export function deactivate() { }
