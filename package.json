@@ -31,6 +31,15 @@
           "type": "string",
           "default": "",
           "description": "Your OpenAI API Key"
+        },
+        "create-readme-openai.model": {
+          "type": "string",
+          "default": "gpt-3.5-turbo",
+          "description": "Your preferred OpenAI model",
+          "enum": [
+            "gpt-3.5-turbo",
+            "gpt-4"
+          ]
         }
       }
     }
