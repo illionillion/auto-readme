@@ -19,12 +19,10 @@ export const generateReadme = async (
   });
 
   const answer = response?.data.choices[0].message?.content;
-  console.log(answer);
   return answer;
 };
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log("key:" + process.env.OPENAI_API_KEY); // なぜかundefined
   /**
    * README作成
    */
@@ -63,7 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
       openai = new OpenAIApi(configuration);
 
       const fileName = "README.md";
-      const exportFilePath = `${vscode.workspace.workspaceFolders?.[0].uri.path}/${fileName}`;
+      const exportFilePath = `${vscode.workspace.workspaceFolders?.[0].uri.path.substring(1)}/${fileName}`;
 
       const options = {
         canSelectMany: false,
@@ -80,10 +78,8 @@ export function activate(context: vscode.ExtensionContext) {
       const targetfilePath = targetFileUri[0].fsPath;
       vscode.window.showInformationMessage(`Selected file: ${targetfilePath}`);
       const filecontent = readFileSync(targetfilePath, "utf-8");
-      console.log(filecontent);
 
       const content = `以下のソースコードのREADMEを日本語で作成してください。\n${filecontent}`;
-      console.log(content);
       // Progress message
       vscode.window.withProgress(
         {
