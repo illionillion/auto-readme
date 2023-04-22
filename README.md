@@ -1,69 +1,18 @@
-# create-readme-openai README
+# README
+このVSCode拡張機能は、OpenAI APIを使用して、ソースコードのREADMEを生成するために作成されました。
 
-## Features
+## 機能
+- ソースコードファイルを選択すると、ファイルの内容に基づいてREADME.mdファイルを生成します。
+- `generateReadme`関数は、OpenAI APIを使用して、READMEの内容を自動的に作成します。
+- `create-readme-openai.create-readme`というコマンドを使用して、READMEを生成することができます。
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## 使い方
+1. OpenAI APIキーを取得してください。
+2. ファイルを開きます。
+3. `Ctrl + Shift + P`(Windows)、`Command + Shift + P`(Mac)を押して、コマンドパレットを開きます。
+4. `create-readme-openai.create-readme`を入力して、READMEを生成します。
+5. OpenAI APIキーを入力します。
+6. README.mdのファイルが自動的に生成されます。
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+## 参照
+このVSCode拡張機能は、OpenAIのAPIを使用しています。詳細については、[OpenAI API](https://beta.openai.com/)をご覧ください。
