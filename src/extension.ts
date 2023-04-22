@@ -35,6 +35,10 @@ export function activate(context: vscode.ExtensionContext) {
       const yourKey = await vscode.window.showInputBox({
         prompt: "Enter your Key.",
       });
+	  if (!yourKey) {
+        vscode.window.showErrorMessage("No Enter your Key!");
+        return;
+      }
       const configuration = new Configuration({
         apiKey: yourKey
       });
