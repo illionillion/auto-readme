@@ -12,7 +12,6 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
-
     "commands": [
       {
         "command": "create-readme-openai.create-readme",
@@ -30,7 +29,6 @@
       }
     }
   },
-  
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
@@ -59,7 +57,6 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
-    "dotenv": "^16.0.3",
     "openai": "^3.2.1"
   }
 }

@@ -5,8 +5,6 @@ import {
   Configuration,
   OpenAIApi,
 } from "openai";
-import * as dotenv from "dotenv";
-dotenv.config({ path: "/path/to/.env" });
 
 let openai: OpenAIApi | undefined = undefined;
 
@@ -34,33 +32,35 @@ export function activate(context: vscode.ExtensionContext) {
     "create-readme-openai.create-readme",
     async () => {
       // APIキーを設定から取得
-      let yourKey = vscode.workspace.getConfiguration("create-readme-openai").get("apiKey") as string | undefined;
+      let yourKey = vscode.workspace
+        .getConfiguration("create-readme-openai")
+        .get("apiKey") as string | undefined;
 
       // APIキーが設定されていない場合、実行時に入力を求める
-if (!yourKey) {
-  yourKey = await vscode.window.showInputBox({
-    prompt: "Enter your OpenAI API Key.",
-  });
+      if (!yourKey) {
+        yourKey = await vscode.window.showInputBox({
+          prompt: "Enter your OpenAI API Key.",
+        });
 
-  // 入力がキャンセルされた場合
-  if (!yourKey) {
-    vscode.window.showErrorMessage("No API key entered! Please set your OpenAI API key in the settings or enter it when prompted.");
-    return;
-  } else {
-    // 入力されたAPIキーを設定に保存する
-    await vscode.workspace
-      .getConfiguration("create-readme-openai")
-      .update("apiKey", yourKey, vscode.ConfigurationTarget.Global);
-    vscode.window.showInformationMessage("API Key saved to settings.");
-  }
-}
+        // 入力がキャンセルされた場合
+        if (!yourKey) {
+          vscode.window.showErrorMessage(
+            "No API key entered! Please set your OpenAI API key in the settings or enter it when prompted."
+          );
+          return;
+        } else {
+          // 入力されたAPIキーを設定に保存する
+          await vscode.workspace
+            .getConfiguration("create-readme-openai")
+            .update("apiKey", yourKey, vscode.ConfigurationTarget.Global);
+          vscode.window.showInformationMessage("API Key saved to settings.");
+        }
+      }
 
       const configuration = new Configuration({
         apiKey: yourKey,
       });
       openai = new OpenAIApi(configuration);
-    
-
 
       const fileName = "README.md";
       const exportFilePath = `${vscode.workspace.workspaceFolders?.[0].uri.path}/${fileName}`;
@@ -69,7 +69,7 @@ if (!yourKey) {
         canSelectMany: false,
         openLabel: "Select",
         filters: {
-          "all_files": ["*"],
+          all_files: ["*"],
         },
       };
       const targetFileUri = await vscode.window.showOpenDialog(options);
@@ -84,33 +84,33 @@ if (!yourKey) {
 
       const content = `以下のソースコードのREADMEを日本語で作成してください。\n${filecontent}`;
       console.log(content);
-        // Progress message
-  vscode.window.withProgress(
-    {
-      location: vscode.ProgressLocation.Notification,
-      title: "Creating README...",
-      cancellable: false,
-    },
-    async (progress) => {
-      progress.report({ increment: 0 });
-      const result = await generateReadme(content);
-      writeFile(exportFilePath, result ?? "", (err) => {
-        if (err) {
-          vscode.window.showErrorMessage(
-            `Failed to create file: ${err.message}`
-          );
-          return;
+      // Progress message
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: "Creating README...",
+          cancellable: false,
+        },
+        async (progress) => {
+          progress.report({ increment: 0 });
+          const result = await generateReadme(content);
+          writeFile(exportFilePath, result ?? "", (err) => {
+            if (err) {
+              vscode.window.showErrorMessage(
+                `Failed to create file: ${err.message}`
+              );
+              return;
+            }
+            vscode.window.showInformationMessage(
+              `File ${fileName} created successfully!`
+            );
+          });
         }
-        vscode.window.showInformationMessage(
-          `File ${fileName} created successfully!`
-        );
-      });
+      );
     }
   );
-}
-);
 
-context.subscriptions.push(create);
+  context.subscriptions.push(create);
 }
 
 // This method is called when your extension is deactivated
