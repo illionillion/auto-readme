@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
-import { generateReadme, save_api_key } from "../utils/utils";
+import { generateReadme, printTree, readDirRecursive, save_api_key, selectFile, selectFolder } from "../utils/utils";
 import { Configuration, OpenAIApi } from "openai";
-import { readFileSync, writeFile } from "fs";
-
+import { existsSync, readFileSync, writeFile } from "fs";
 /**
  * READMEを作成するコマンド
  */
@@ -84,7 +83,7 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
    */
   let pastFlag = false;
   const confirmReset = await vscode.window.showInformationMessage(
-    "Reset README？",
+    "Reset exists README？",
     { modal: true },
     "Yes",
     "No"
@@ -99,35 +98,40 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
     // 実行する
     pastFlag = true;
   }
+  // READMEのパスを取得
   vscode.window.showInformationMessage(`You selected "${confirmReset}"!`);
   const fileName = "README.md";
   const exportFilePath = `${vscode.workspace.workspaceFolders?.[0].uri.path.substring(
     1
   )}/${fileName}`;
 
-  const pastFileContent = readFileSync(exportFilePath, "utf-8");
+  const pastFileContent = existsSync(exportFilePath)
+    ? readFileSync(exportFilePath, "utf-8")
+    : "";
 
-  const options = {
-    canSelectMany: false,
-    openLabel: "Select",
-    filters: {
-      all_files: ["*"],
-    },
-  };
-  const targetFileUri = await vscode.window.showOpenDialog(options); // ここでファイルを選択している
-  if (!targetFileUri) {
+  //ファイル選択
+  const targetfilePath = await selectFile();
+  if (!targetfilePath) {
     vscode.window.showErrorMessage("No file selected!");
     return;
   }
-  const targetfilePath = targetFileUri[0].fsPath;
   vscode.window.showInformationMessage(`Selected file: ${targetfilePath}`);
+
+  // ファイルの親フォルダ取得
+  const folderPath = targetfilePath.replace(/\/[^\/]*$/, '');
+  // ツリーのルートを作成する
+  const root = readDirRecursive(folderPath);
+  // アスキーアート出力
+  const tree = printTree(root)
+  console.log(tree);
+  
   const filecontent = readFileSync(targetfilePath, "utf-8");
 
   const content = (() => {
     if (pastFlag) {
-      return `以下のソースコードをREADME参考に新しいREADMEを日本語で作成してください。\nREADME\n${pastFileContent}\n\nソースコード${filecontent}`;
+      return `以下のソースコードをREADME参考に新しいREADMEを日本語で作成してください。\nREADME:\n${pastFileContent}\n\nソースコード:\n${filecontent}\n\nフォルダの構成:\n${tree}`;
     } else {
-      return `以下のソースコードのREADMEを日本語で作成してください。\n${filecontent}`;
+      return `以下のソースコードのREADMEを日本語で作成してください。\nソースコード:\n${filecontent}\n\nフォルダの構成:\n${tree}`;
     }
   })();
   // Progress message
