@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { generateReadme, save_api_key } from "../utils/utils";
 import { Configuration, OpenAIApi } from "openai";
-import { readFileSync, writeFile } from "fs";
+import { existsSync, readFileSync, writeFile } from "fs";
 
 /**
  * READMEを作成するコマンド
@@ -105,7 +105,9 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
     1
   )}/${fileName}`;
 
-  const pastFileContent = readFileSync(exportFilePath, "utf-8");
+  const pastFileContent = existsSync(exportFilePath)
+    ? readFileSync(exportFilePath, "utf-8")
+    : "";
 
   const options = {
     canSelectMany: false,
