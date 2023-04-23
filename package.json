@@ -1,12 +1,13 @@
 {
   "name": "create-readme-openai",
-  "displayName": "create-readme-openai",
+  "displayName": "readmeGPT(BETA)",
   "description": "Create README By OpenAI",
-  "version": "0.0.2",
+  "version": "0.0.7",
   "engines": {
     "vscode": "^1.77.0"
   },
   "license": "MIT",
+  "publisher": "CREATEME",
   "repository": {
     "type": "git",
     "url": "https://github.com/illionillion/create-readme-openai.git"
@@ -21,6 +22,10 @@
       {
         "command": "create-readme-openai.create-readme",
         "title": "Create README"
+      },
+      {
+        "command": "create-readme-openai.set-api-key",
+        "title": "Set API Key"
       }
     ],
     "configuration": {
@@ -30,6 +35,15 @@
           "type": "string",
           "default": "",
           "description": "Your OpenAI API Key"
+        },
+        "create-readme-openai.model": {
+          "type": "string",
+          "default": "gpt-3.5-turbo",
+          "description": "Your preferred OpenAI model",
+          "enum": [
+            "gpt-3.5-turbo",
+            "gpt-4"
+          ]
         }
       }
     }
