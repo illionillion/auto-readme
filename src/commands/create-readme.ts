@@ -79,10 +79,26 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
   });
   openai = new OpenAIApi(configuration);
 
+  /**
+   * 過去のREADMEを参照するかのフラグ
+   */
+  let pastFlag = false;
+  vscode.window
+    .showInformationMessage("Reset README？", { modal: true }, "Yes", "No")
+    .then((value) => {
+      if (value === "No") {
+        // 実行する
+        pastFlag = true;
+      }
+      vscode.window.showInformationMessage(`You selected "${value}"!`);
+    });
+
   const fileName = "README.md";
   const exportFilePath = `${vscode.workspace.workspaceFolders?.[0].uri.path.substring(
     1
   )}/${fileName}`;
+
+  const pastFileContent = readFileSync(exportFilePath, "utf-8");
 
   const options = {
     canSelectMany: false,
@@ -91,7 +107,7 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
       all_files: ["*"],
     },
   };
-  const targetFileUri = await vscode.window.showOpenDialog(options);
+  const targetFileUri = await vscode.window.showOpenDialog(options); // ここでファイルを選択している
   if (!targetFileUri) {
     vscode.window.showErrorMessage("No file selected!");
     return;
@@ -100,7 +116,13 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
   vscode.window.showInformationMessage(`Selected file: ${targetfilePath}`);
   const filecontent = readFileSync(targetfilePath, "utf-8");
 
-  const content = `以下のソースコードのREADMEを日本語で作成してください。\n${filecontent}`;
+  const content = (() => {
+    if (pastFlag) {
+      return `以下のソースコードをREADME参考に新しいREADMEを日本語で作成してください。\nREADME\n${pastFileContent}\n\nソースコード${filecontent}`;
+    } else {
+      return `以下のソースコードのREADMEを日本語で作成してください。\n${filecontent}`;
+    }
+  })();
   // Progress message
   vscode.window.withProgress(
     {
