@@ -22,7 +22,8 @@ OpenAI という API を利用して、説明文、使用例などの必要な�
 1. フォルダを開き、"README.md"ファイルが存在しない場合、"Ctrl + Shift + P"を押してコマンドパレットを表示します。
 2. "Create README with OpenAI"を選択し、Enter キーを押します。
 3. API キーの設定がされていない場合、プロンプトが表示されます。"Set API Key"を選択して、API キーを設定してください。
-4. ファイルが自動生成されるまでしばらくお待ちください。
+4. メインのファイルを選択してください。
+5. ファイルが自動生成されるまでしばらくお待ちください。
 
 ## ライセンス
 
@@ -51,7 +52,8 @@ This extension provides the following features:
 1. Open a folder and if there is no "README.md" file, press "Ctrl + Shift + P" to display the command palette.
 2. Select "Create README with OpenAI" and press Enter.
 3. If the API key is not set, a prompt will appear. Select "Set API Key" and set the API key.
-4. Please wait a moment until the file is automatically generated.
+4. Select the main file.
+5. Please wait a moment until the file is automatically generated.
 
 ## License
 
