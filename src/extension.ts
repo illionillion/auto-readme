@@ -8,14 +8,13 @@ let readmeStatusBarItem: ReadmeStatusBarItem;
 let openai: OpenAIApi | undefined = undefined;
 //src\commands\statusBarItem.ts
 export function activate(context: vscode.ExtensionContext) {
+  
   /**
    * README作成
    */
   const create = vscode.commands.registerCommand(
     "create-readme-openai.create-readme",
     async () => await create_readme(openai)
-
-
   );
 
   /**
@@ -28,9 +27,11 @@ export function activate(context: vscode.ExtensionContext) {
 
   readmeStatusBarItem = new ReadmeStatusBarItem();
 
+
+  readmeStatusBarItem.show(); // ステータスバーを表示
+
   context.subscriptions.push(create); // イベント追加
   context.subscriptions.push(setAPIKey); // イベント追加
-
   context.subscriptions.push(readmeStatusBarItem);
 
 }
@@ -39,6 +40,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function deactivate() {
   if (readmeStatusBarItem) {
+    console.log("dispose()");
+    
     readmeStatusBarItem.dispose();
   }
 }
+

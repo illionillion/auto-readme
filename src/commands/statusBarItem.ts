@@ -17,4 +17,8 @@ export class ReadmeStatusBarItem {
   dispose() {
     this.statusBarItem.dispose();
   }
+  
+  show(): void {
+    this.statusBarItem.show();
+  }
 }
