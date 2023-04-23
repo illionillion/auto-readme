@@ -24,31 +24,6 @@ OpenAI という API を利用して、説明文、使用例などの必要な�
 3. API キーの設定がされていない場合、プロンプトが表示されます。"Set API Key"を選択して、API キーを設定してください。
 4. ファイルが自動生成されるまでしばらくお待ちください。
 
-## ファイル構成
-
-```
-.
-└── src
-    ├── commands
-    │   ├── create-readme.ts
-    │   ├── set-api-key.ts
-    │   └── statusBarItem.ts
-    ├── extension.ts
-    ├── test
-    │   ├── runTest.ts
-    │   └── suite
-    │       ├── extension.test.ts
-    │       └── index.ts
-    └── utils
-        ├── utils.ts
-        └── openai-config.ts
-```
-
-- `commands`: コマンドを定義するフォルダ
-- `extension.ts`: 拡張機能のエントリポイントとなるファイル
-- `test`: テストコードを配置するフォルダ
-- `utils`: 汎用的な関数を定義するフォルダ
-
 ## ライセンス
 
 MIT License. 詳細については[LICENSE.md](./LICENSE.md)を参照してください。
@@ -77,31 +52,6 @@ This extension provides the following features:
 2. Select "Create README with OpenAI" and press Enter.
 3. If the API key is not set, a prompt will appear. Select "Set API Key" and set the API key.
 4. Please wait a moment until the file is automatically generated.
-
-## File structure
-
-```
-.
-└── src
-    ├── commands
-    │   ├── create-readme.ts
-    │   ├── set-api-key.ts
-    │   └── statusBarItem.ts
-    ├── extension.ts
-    ├── test
-    │   ├── runTest.ts
-    │   └── suite
-    │       ├── extension.test.ts
-    │       └── index.ts
-    └── utils
-        ├── utils.ts
-        └── openai-config.ts
-```
-
-- `commands`: folder that defines commands
-- `extension.ts`: entry point file for the extension
-- `test`: folder to place test code
-- `utils`: folder that defines general-purpose functions
 
 ## License
 
