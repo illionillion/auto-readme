@@ -8,6 +8,8 @@ let readmeStatusBarItem: ReadmeStatusBarItem;
 let openai: OpenAIApi | undefined = undefined;
 //src\commands\statusBarItem.ts
 export function activate(context: vscode.ExtensionContext) {
+
+  
   
   /**
    * README作成
@@ -17,6 +19,8 @@ export function activate(context: vscode.ExtensionContext) {
     async () => await create_readme(openai)
   );
 
+
+  
   /**
    * APIキー設定
    */
@@ -25,10 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
     set_api_key
   );
 
-  readmeStatusBarItem = new ReadmeStatusBarItem();
-
-
-  readmeStatusBarItem.show(); // ステータスバーを表示
+  const readmeStatusBarItem = new ReadmeStatusBarItem();
 
   context.subscriptions.push(create); // イベント追加
   context.subscriptions.push(setAPIKey); // イベント追加
