@@ -83,7 +83,7 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
    */
   let pastFlag = false;
   const confirmReset = await vscode.window.showInformationMessage(
-    "Reset README？",
+    "Reset exists README？",
     { modal: true },
     "Yes",
     "No"
