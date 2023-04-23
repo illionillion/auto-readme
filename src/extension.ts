@@ -24,9 +24,6 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(create); // イベント追加
   context.subscriptions.push(setAPIKey); // イベント追加
-
-  console.log('TEST!!');
-  
 }
 
 // This method is called when your extension is deactivated
