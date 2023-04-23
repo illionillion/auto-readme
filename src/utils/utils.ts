@@ -55,12 +55,22 @@ export const generateReadme = async (
         success: false,
         content: "An error occurred during the request. Please try again.",
       };
+    } else if (
+      isAxiosError(error) &&
+      error.response?.data.error.code === 'context_length_exceeded'
+    ) {
+      // トークン不足時
+      return {
+        success: false,
+        content:
+          'An error occurred during the request. The file size is too large. Please choose another file or format the code in the file.',
+      };
     } else {
       // APIキーが違うなど
       return {
         success: false,
         content:
-          "An error occurred during the request. Plese check your API key and model",
+          "An error occurred during the request. Please check your API key and model",
       };
     }
   }
