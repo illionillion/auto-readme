@@ -83,16 +83,23 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
    * 過去のREADMEを参照するかのフラグ
    */
   let pastFlag = false;
-  vscode.window
-    .showInformationMessage("Reset README？", { modal: true }, "Yes", "No")
-    .then((value) => {
-      if (value === "No") {
-        // 実行する
-        pastFlag = true;
-      }
-      vscode.window.showInformationMessage(`You selected "${value}"!`);
-    });
+  const confirmReset = await vscode.window.showInformationMessage(
+    "Reset README？",
+    { modal: true },
+    "Yes",
+    "No"
+  );
+  vscode.window;
 
+  if (confirmReset === undefined) {
+    vscode.window.showErrorMessage("You selected cancel!");
+    return;
+  }
+  if (confirmReset === "No") {
+    // 実行する
+    pastFlag = true;
+  }
+  vscode.window.showInformationMessage(`You selected "${confirmReset}"!`);
   const fileName = "README.md";
   const exportFilePath = `${vscode.workspace.workspaceFolders?.[0].uri.path.substring(
     1
