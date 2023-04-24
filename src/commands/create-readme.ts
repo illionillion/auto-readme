@@ -1,7 +1,15 @@
 import * as vscode from "vscode";
-import { generateReadme, printTree, readDirRecursive, save_api_key, selectFile, selectFolder } from "../utils/utils";
+import {
+  generateReadme,
+  printTree,
+  readDirRecursive,
+  removeUserName,
+  save_api_key,
+  selectFile,
+} from "../utils/utils";
 import { Configuration, OpenAIApi } from "openai";
 import { existsSync, readFileSync, writeFile } from "fs";
+import { prompt_01, prompt_02 } from "../utils/prompts";
 /**
  * READMEを作成するコマンド
  */
@@ -115,23 +123,23 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
     vscode.window.showErrorMessage("No file selected!");
     return;
   }
-  vscode.window.showInformationMessage(`Selected file: ${targetfilePath}`);
+  vscode.window.showInformationMessage(`Selected file: ${removeUserName(targetfilePath)}`);
 
   // ファイルの親フォルダ取得
-  const folderPath = targetfilePath.replace(/\/[^\/]*$/, '');
+  const folderPath = targetfilePath.replace(/\/[^\/]*$/, "");
   // ツリーのルートを作成する
   const root = readDirRecursive(folderPath);
   // アスキーアート出力
-  const tree = printTree(root)
+  const tree = printTree(root);
   console.log(tree);
-  
+
   const filecontent = readFileSync(targetfilePath, "utf-8");
 
   const content = (() => {
     if (pastFlag) {
-      return `以下のソースコードをREADME参考に新しいREADMEを日本語で作成してください。\nREADME:\n${pastFileContent}\n\nソースコード:\n${filecontent}\n\nフォルダの構成:\n${tree}`;
+      return prompt_02(filecontent, tree, pastFileContent);
     } else {
-      return `以下のソースコードのREADMEを日本語で作成してください。\nソースコード:\n${filecontent}\n\nフォルダの構成:\n${tree}`;
+      return prompt_01(filecontent, tree);
     }
   })();
   // Progress message
