@@ -8,9 +8,6 @@ let readmeStatusBarItem: ReadmeStatusBarItem;
 let openai: OpenAIApi | undefined = undefined;
 //src\commands\statusBarItem.ts
 export function activate(context: vscode.ExtensionContext) {
-
-  
-  
   /**
    * README作成
    */
@@ -19,8 +16,6 @@ export function activate(context: vscode.ExtensionContext) {
     async () => await create_readme(openai)
   );
 
-
-  
   /**
    * APIキー設定
    */
@@ -34,16 +29,12 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(create); // イベント追加
   context.subscriptions.push(setAPIKey); // イベント追加
   context.subscriptions.push(readmeStatusBarItem);
-
 }
 
 // This method is called when your extension is deactivated
 
 export function deactivate() {
   if (readmeStatusBarItem) {
-    console.log("dispose()");
-    
     readmeStatusBarItem.dispose();
   }
 }
-
