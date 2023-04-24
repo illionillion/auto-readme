@@ -57,13 +57,13 @@ export const generateReadme = async (
       };
     } else if (
       isAxiosError(error) &&
-      error.response?.data.error.code === 'context_length_exceeded'
+      error.response?.data.error.code === "context_length_exceeded"
     ) {
       // トークン不足時
       return {
         success: false,
         content:
-          'An error occurred during the request. The file size is too large. Please choose another file or format the code in the file.',
+          "An error occurred during the request. The file size is too large. Please choose another file or format the code in the file.",
       };
     } else {
       // APIキーが違うなど
@@ -144,10 +144,17 @@ interface TreeNode {
   nodes?: TreeNode[];
 }
 
+/**
+ * ツリー表示
+ * @param tree
+ * @param depth
+ * @param isLast
+ * @returns
+ */
 export const printTree = (tree: TreeNode, depth = 0, isLast = true): string => {
-  const LINE = '│  ';
-  const BRANCH = isLast ? '└──' : '├──';
-  const indent = ' '.repeat(depth * 4);
+  const LINE = "│  ";
+  const BRANCH = isLast ? "└──" : "├──";
+  const indent = " ".repeat(depth * 4);
   let treeStr = `${indent}${BRANCH}${tree.label}\n`;
 
   if (tree.nodes) {
@@ -156,9 +163,39 @@ export const printTree = (tree: TreeNode, depth = 0, isLast = true): string => {
       const isLastNode = index === lastIndex;
       treeStr += printTree(node, depth + 1, isLastNode);
       if (!isLastNode) {
-        treeStr += `${indent}${isLast ? '   ' : LINE}`;
+        treeStr += `${indent}${isLast ? "   " : LINE}`;
       }
     });
   }
   return treeStr;
+};
+
+/**
+ *
+ * Windows用の正規表現パターン
+ */
+const winPattern =
+  /^([a-zA-Z]):\\(?:[^\\/:*?"<>|]+\\)*Users\\([^\\/:*?"<>|]+)(.*)$/;
+
+/**
+ * Mac用の正規表現パターン
+ **/
+const macPattern = /^\/Users\/([^/]+)(.*)$/;
+/**
+ * Linux用
+ */
+const linuxPattern = /^\/home\/([^/]+)(.*)$/;
+
+export const removeUserName = (path: string) => {
+  switch (process.platform) {
+    case "win32":
+      return path.replace(winPattern, "$1:\\~$2"); // Windowsの場合
+    case "darwin":
+      return path.replace(macPattern, "/~$2"); // Macの場合
+    case "linux":
+      return path.replace(linuxPattern, "/~$2"); // Linux
+
+    default:
+      return path;
+  }
 };
