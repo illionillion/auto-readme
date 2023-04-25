@@ -2,7 +2,7 @@
   "name": "create-readme-openai",
   "displayName": "readmeGPT(BETA)",
   "description": "Create README By OpenAI",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "icon": "readmeGPT-logo.png",
   "engines": {
     "vscode": "^1.77.0"
