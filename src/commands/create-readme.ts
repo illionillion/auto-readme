@@ -127,6 +127,13 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
 
   // ファイルの親フォルダ取得
   const folderPath = targetfilePath.replace(/\/[^\/]*$/, "");
+  const workspaceFolders = vscode.workspace.workspaceFolders
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    vscode.window.showErrorMessage("No workspace folder found.");
+    return
+  }
+  // ワークスペースのフォルダ取得
+  const workspaceFolderPath = workspaceFolders[0].uri.fsPath;
   // ツリーのルートを作成する
   const root = readDirRecursive(folderPath);
   // アスキーアート出力

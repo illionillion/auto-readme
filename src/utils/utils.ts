@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { AxiosError } from "axios";
 import { ChatCompletionRequestMessageRoleEnum, OpenAIApi } from "openai";
 import { readdirSync, statSync } from "fs";
-
+import { join } from "path";
 /**
  * 共通のモジュール
  */
@@ -79,18 +79,23 @@ export const generateReadme = async (
 /**
  * フォルダの配下のtreeを取得
  * @param path パス
+ * @param ignores ignoreで除外されているもの
  * @returns
  */
 export const readDirRecursive = (
-  path: string
+  path: string,
+  ignores: string[] = []
 ): { label: string; nodes?: any[] } => {
   const stats = statSync(path);
 
   if (stats.isDirectory()) {
     const folderName = path.split("/").pop() as string;
-    const children = readdirSync(path).map((child) =>
-      readDirRecursive(`${path}/${child}`)
-    );
+    const children = readdirSync(path)
+      .filter(child => !/(^|\/)\.[^\/\.]/g.test(child)) // ドットで始まるフォルダを除外する
+      .filter(child => !/(^|\/)node_modules($|\/)/g.test(child)) // node_modulesフォルダを除外する
+      .filter(child => !/(^|\/)mysql($|\/)/g.test(child)) // mysqlフォルダを除外する
+      .filter(child => ignores.indexOf(child) === -1) // ignoresに記載されたファイルを除外する
+      .map(child => readDirRecursive(join(path, child), ignores));
 
     return { label: folderName, nodes: children };
   } else {
