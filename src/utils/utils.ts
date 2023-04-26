@@ -3,7 +3,6 @@ import { AxiosError } from "axios";
 import { ChatCompletionRequestMessageRoleEnum, OpenAIApi } from "openai";
 import { existsSync, readFileSync, readdirSync, statSync } from "fs";
 import { join } from "path";
-import * as micromatch from "micromatch";
 
 /**
  * 共通のモジュール
@@ -94,15 +93,15 @@ export const readDirRecursive = (
   const stats = statSync(path);
 
   if (stats.isDirectory()) {
-    const folderName = path.split("/").pop() as string;
+    const folderName = path.split("\\").pop() as string;
     const children = readdirSync(path)
-      .filter((child) => !/(^|\/)\.[^\/\.]/g.test(child)) // ドットで始まるフォルダを除外する
+      .filter((child) => !/(^|\\)\.[^\\\.]/g.test(child)) // ドットで始まるフォルダを除外する
       .filter((child) => ignores.indexOf(child) === -1) // ignoresに記載されたフォルダを除外する
       .map((child) => readDirRecursive(join(path, child), ignores));
 
     return { label: folderName, nodes: children };
   } else {
-    return { label: path.split("/").pop() as string };
+    return { label: path.split("\\").pop() as string };
   }
 };
 
@@ -116,8 +115,10 @@ export const getGitignorePatterns = (workspacePath: string): string[] => {
 
   if (existsSync(gitignorePath)) {
     const gitignoreContent = readFileSync(gitignorePath, "utf8");
+    // 改行文字に応じて分割
+    const separator = process.platform === 'win32' ? '\r\n' : '\n';
     return gitignoreContent
-      .split("\n")
+      .split(separator)
       .filter((line) => !line.startsWith("#") && line.trim() !== "")
       .map((line)=>line.replace("/", ""));
   } else {
@@ -211,7 +212,7 @@ const linuxPattern = /^\/home\/([^/]+)(.*)$/;
 export const removeUserName = (path: string) => {
   switch (process.platform) {
     case "win32":
-      return path.replace(winPattern, "$1:\\~$2"); // Windowsの場合
+      return path; // Windowsの場合
     case "darwin":
       return path.replace(macPattern, "/~$2"); // Macの場合
     case "linux":

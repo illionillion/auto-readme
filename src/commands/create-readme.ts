@@ -124,23 +124,28 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
     vscode.window.showErrorMessage("No file selected!");
     return;
   }
-  vscode.window.showInformationMessage(`Selected file: ${removeUserName(targetfilePath)}`);
+  vscode.window.showInformationMessage(
+    `Selected file: ${removeUserName(targetfilePath)}`
+  );
 
   // ファイルの親フォルダ取得
   const folderPath = targetfilePath.replace(/\/[^\/]*$/, "");
-  const workspaceFolders = vscode.workspace.workspaceFolders
+  const workspaceFolders = vscode.workspace.workspaceFolders;
   if (!workspaceFolders || workspaceFolders.length === 0) {
     vscode.window.showErrorMessage("No workspace folder found.");
-    return
+    return;
   }
   // ワークスペースのフォルダ取得
   const workspaceFolderPath = workspaceFolders[0].uri.fsPath;
   // ツリーのルートを作成する
-  
+
   console.log(getGitignorePatterns(workspaceFolderPath));
-  const root = readDirRecursive(workspaceFolderPath, getGitignorePatterns(workspaceFolderPath));
+  const root = readDirRecursive(
+    workspaceFolderPath,
+    getGitignorePatterns(workspaceFolderPath)
+  );
   // const root = readDirRecursive(folderPath);
-  // console.log(root);
+  console.log(root);
   // アスキーアート出力
   const tree = printTree(root);
   console.log(tree);
@@ -161,8 +166,7 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
       title: "Creating README...",
       cancellable: false,
     },
-    async (progress) => {
-      progress.report({ increment: 0 });
+    async () => {
       const result = await generateReadme(content, modelName, "user", openai);
       if (result.success) {
         writeFile(exportFilePath, result.content ?? "", (err) => {
