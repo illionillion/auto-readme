@@ -97,9 +97,7 @@ export const readDirRecursive = (
     const folderName = path.split("/").pop() as string;
     const children = readdirSync(path)
       .filter((child) => !/(^|\/)\.[^\/\.]/g.test(child)) // ドットで始まるフォルダを除外する
-      // .filter((child) => !/(^|\/)node_modules($|\/)/g.test(child)) // node_modulesフォルダを除外する
-      // .filter((child) => !/(^|\/)mysql($|\/)/g.test(child)) // mysqlフォルダを除外する
-      .filter((child) => ignores.indexOf(join("/", child)) === -1) // ignoresに記載されたフォルダを除外する
+      .filter((child) => ignores.indexOf(child) === -1) // ignoresに記載されたフォルダを除外する
       .map((child) => readDirRecursive(join(path, child), ignores));
 
     return { label: folderName, nodes: children };
@@ -120,7 +118,8 @@ export const getGitignorePatterns = (workspacePath: string): string[] => {
     const gitignoreContent = readFileSync(gitignorePath, "utf8");
     return gitignoreContent
       .split("\n")
-      .filter((line) => !line.startsWith("#") && line.trim() !== "");
+      .filter((line) => !line.startsWith("#") && line.trim() !== "")
+      .map((line)=>line.replace("/", ""));
   } else {
     return [];
   }
