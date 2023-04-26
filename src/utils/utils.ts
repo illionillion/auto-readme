@@ -5,7 +5,6 @@ import { existsSync, readFileSync, readdirSync, statSync } from "fs";
 import { join } from "path";
 import * as micromatch from "micromatch";
 
-
 /**
  * 共通のモジュール
  */
@@ -98,11 +97,11 @@ export const readDirRecursive = (
     const folderName = path.split("/").pop() as string;
     const children = readdirSync(path)
       .filter((child) => !/(^|\/)\.[^\/\.]/g.test(child)) // ドットで始まるフォルダを除外する
-      .filter((child) => !/(^|\/)node_modules($|\/)/g.test(child)) // node_modulesフォルダを除外する
-      .filter((child) => !/(^|\/)mysql($|\/)/g.test(child)) // mysqlフォルダを除外する
-      .filter((child) => ignores.indexOf(child) === -1) // ignoresに記載されたファイルを除外する
+      // .filter((child) => !/(^|\/)node_modules($|\/)/g.test(child)) // node_modulesフォルダを除外する
+      // .filter((child) => !/(^|\/)mysql($|\/)/g.test(child)) // mysqlフォルダを除外する
+      .filter((child) => ignores.indexOf(join("/", child)) === -1) // ignoresに記載されたフォルダを除外する
       .map((child) => readDirRecursive(join(path, child), ignores));
-    
+
     return { label: folderName, nodes: children };
   } else {
     return { label: path.split("/").pop() as string };
@@ -111,17 +110,17 @@ export const readDirRecursive = (
 
 /**
  * gitignoreの内容取得
- * @param workspacePath 
- * @returns 
+ * @param workspacePath
+ * @returns
  */
 export const getGitignorePatterns = (workspacePath: string): string[] => {
-  const gitignorePath = join(workspacePath, '.gitignore');
+  const gitignorePath = join(workspacePath, ".gitignore");
 
   if (existsSync(gitignorePath)) {
-    const gitignoreContent = readFileSync(gitignorePath, 'utf8');
+    const gitignoreContent = readFileSync(gitignorePath, "utf8");
     return gitignoreContent
-      .split('\n')
-      .filter((line) => !line.startsWith('#') && line.trim() !== '');
+      .split("\n")
+      .filter((line) => !line.startsWith("#") && line.trim() !== "");
   } else {
     return [];
   }
@@ -196,7 +195,6 @@ export const selectFile = async (): Promise<string | undefined> => {
 };
 
 /**
- *
  * Windows用の正規表現パターン
  */
 const winPattern =
