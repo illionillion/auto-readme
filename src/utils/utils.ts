@@ -115,15 +115,16 @@ export const getGitignorePatterns = (workspacePath: string): string[] => {
 
   if (existsSync(gitignorePath)) {
     const gitignoreContent = readFileSync(gitignorePath, "utf8");
+    // 改行文字に応じて分割
+    const separator = process.platform === 'win32' ? '\r\n' : '\n';
     return gitignoreContent
-      .split("\r\n") // 改行文字CRLFで分割
+      .split(separator)
       .filter((line) => !line.startsWith("#") && line.trim() !== "")
       .map((line)=>line.replace("/", ""));
   } else {
     return [];
   }
 };
-
 
 /**
  * ツリー表示
