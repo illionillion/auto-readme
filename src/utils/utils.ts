@@ -1,7 +1,9 @@
 import * as vscode from "vscode";
 import { AxiosError } from "axios";
 import { ChatCompletionRequestMessageRoleEnum, OpenAIApi } from "openai";
-import { readdirSync, statSync } from "fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "fs";
+import { join } from "path";
+import * as micromatch from "micromatch";
 
 /**
  * 共通のモジュール
@@ -75,27 +77,79 @@ export const generateReadme = async (
     }
   }
 };
-
+interface TreeNode {
+  label: string;
+  nodes?: TreeNode[];
+}
 /**
  * フォルダの配下のtreeを取得
  * @param path パス
+ * @param ignores ignoreで除外されているもの
  * @returns
  */
 export const readDirRecursive = (
-  path: string
-): { label: string; nodes?: any[] } => {
+  path: string,
+  ignores: string[] = []
+): TreeNode => {
   const stats = statSync(path);
 
   if (stats.isDirectory()) {
     const folderName = path.split("/").pop() as string;
-    const children = readdirSync(path).map((child) =>
-      readDirRecursive(`${path}/${child}`)
-    );
+    const children = readdirSync(path)
+      .filter((child) => !/(^|\/)\.[^\/\.]/g.test(child)) // ドットで始まるフォルダを除外する
+      // .filter((child) => !/(^|\/)node_modules($|\/)/g.test(child)) // node_modulesフォルダを除外する
+      // .filter((child) => !/(^|\/)mysql($|\/)/g.test(child)) // mysqlフォルダを除外する
+      .filter((child) => ignores.indexOf(join("/", child)) === -1) // ignoresに記載されたフォルダを除外する
+      .map((child) => readDirRecursive(join(path, child), ignores));
 
     return { label: folderName, nodes: children };
   } else {
     return { label: path.split("/").pop() as string };
   }
+};
+
+/**
+ * gitignoreの内容取得
+ * @param workspacePath
+ * @returns
+ */
+export const getGitignorePatterns = (workspacePath: string): string[] => {
+  const gitignorePath = join(workspacePath, ".gitignore");
+
+  if (existsSync(gitignorePath)) {
+    const gitignoreContent = readFileSync(gitignorePath, "utf8");
+    return gitignoreContent
+      .split("\n")
+      .filter((line) => !line.startsWith("#") && line.trim() !== "");
+  } else {
+    return [];
+  }
+};
+
+/**
+ * ツリー表示
+ * @param tree
+ * @param depth
+ * @param isLast
+ * @returns
+ */
+export const printTree = (tree: TreeNode, depth = 0, isLast = true): string => {
+  const LINE = "│  ";
+  const BRANCH = isLast ? "└──" : "├──";
+  const indent = " ".repeat(depth * 4);
+  let treeStr = `${indent}${BRANCH}${tree.label}\n`;
+
+  if (tree.nodes) {
+    const lastIndex = tree.nodes.length - 1;
+    tree.nodes.forEach((node, index) => {
+      const isLastNode = index === lastIndex;
+      treeStr += printTree(node, depth + 1, isLastNode);
+      if (!isLastNode) {
+        treeStr += `${indent}${isLast ? "   " : LINE}`;
+      }
+    });
+  }
+  return treeStr;
 };
 
 /**
@@ -139,39 +193,8 @@ export const selectFile = async (): Promise<string | undefined> => {
 
   return undefined;
 };
-interface TreeNode {
-  label: string;
-  nodes?: TreeNode[];
-}
 
 /**
- * ツリー表示
- * @param tree
- * @param depth
- * @param isLast
- * @returns
- */
-export const printTree = (tree: TreeNode, depth = 0, isLast = true): string => {
-  const LINE = "│  ";
-  const BRANCH = isLast ? "└──" : "├──";
-  const indent = " ".repeat(depth * 4);
-  let treeStr = `${indent}${BRANCH}${tree.label}\n`;
-
-  if (tree.nodes) {
-    const lastIndex = tree.nodes.length - 1;
-    tree.nodes.forEach((node, index) => {
-      const isLastNode = index === lastIndex;
-      treeStr += printTree(node, depth + 1, isLastNode);
-      if (!isLastNode) {
-        treeStr += `${indent}${isLast ? "   " : LINE}`;
-      }
-    });
-  }
-  return treeStr;
-};
-
-/**
- *
  * Windows用の正規表現パターン
  */
 const winPattern =

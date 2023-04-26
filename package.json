@@ -2,7 +2,7 @@
   "name": "create-readme-openai",
   "displayName": "readmeGPT(BETA)",
   "description": "Create README By OpenAI",
-  "version": "0.1.8",
+  "version": "0.2.1",
   "icon": "readmeGPT-logo.png",
   "engines": {
     "vscode": "^1.77.0"
@@ -81,6 +81,8 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
+    "@types/micromatch": "^4.0.2",
+    "micromatch": "^4.0.5",
     "openai": "^3.2.1"
   }
 }
