@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import {
   generateReadme,
+  getGitignorePatterns,
   printTree,
   readDirRecursive,
   removeUserName,
@@ -135,7 +136,10 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
   // ワークスペースのフォルダ取得
   const workspaceFolderPath = workspaceFolders[0].uri.fsPath;
   // ツリーのルートを作成する
-  const root = readDirRecursive(folderPath);
+  
+  const root = readDirRecursive(workspaceFolderPath, getGitignorePatterns(workspaceFolderPath));
+  // const root = readDirRecursive(folderPath);
+  console.log(root);
   // アスキーアート出力
   const tree = printTree(root);
   console.log(tree);
