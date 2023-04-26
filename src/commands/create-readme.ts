@@ -145,7 +145,7 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
     getGitignorePatterns(workspaceFolderPath)
   );
   // const root = readDirRecursive(folderPath);
-  // console.log(root);
+  console.log(root);
   // アスキーアート出力
   const tree = printTree(root);
   console.log(tree);
