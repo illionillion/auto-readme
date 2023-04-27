@@ -1,9 +1,9 @@
 {
-  "name": "create-readme-openai",
-  "displayName": "readmeGPT(BETA)",
-  "description": "Create README By OpenAI",
-  "version": "0.2.4",
-  "icon": "readmeGPT-logo.png",
+  "name": "auto-readme",
+  "displayName": "AutoREADME(BETA)",
+  "description": "ChatGPT automatically creates a README.",
+  "version": "0.0.3",
+  "icon": "",
   "engines": {
     "vscode": "^1.77.0"
   },
@@ -11,7 +11,7 @@
   "publisher": "CREATEME",
   "repository": {
     "type": "git",
-    "url": "https://github.com/illionillion/create-readme-openai.git"
+    "url": "https://github.com/illionillion/auto-readme.git"
   },
   "categories": [
     "Other"
@@ -32,7 +32,7 @@
       }
     ],
     "configuration": {
-      "title": "Create README OpenAI",
+      "title": "ChatGPT automatically creates a README.",
       "properties": {
         "create-readme-openai.apiKey": {
           "type": "string",
