@@ -3,6 +3,8 @@ import { AxiosError } from "axios";
 import { ChatCompletionRequestMessageRoleEnum, OpenAIApi } from "openai";
 import { existsSync, readFileSync, readdirSync, statSync } from "fs";
 import { join } from "path";
+const jsonData = require("../../package.json");
+const packageName: string = jsonData.name; // 拡張機能の名前取得
 
 /**
  * 共通のモジュール
@@ -116,11 +118,11 @@ export const getGitignorePatterns = (workspacePath: string): string[] => {
   if (existsSync(gitignorePath)) {
     const gitignoreContent = readFileSync(gitignorePath, "utf8");
     // 改行文字に応じて分割
-    const separator = process.platform === 'win32' ? '\r\n' : '\n';
+    const separator = process.platform === "win32" ? "\r\n" : "\n";
     return gitignoreContent
       .split(separator)
       .filter((line) => !line.startsWith("#") && line.trim() !== "")
-      .map((line)=>line.replace("/", ""));
+      .map((line) => line.replace("/", ""));
   } else {
     return [];
   }
@@ -220,5 +222,39 @@ export const removeUserName = (path: string) => {
 
     default:
       return path;
+  }
+};
+/**
+ * 新しい拡張機能へリダイレクト
+ */
+export const redirectToNewExtension = () => {
+  const newExtensionUrl =
+    "https://marketplace.visualstudio.com/items?itemName=CREATEME.auto-readme";
+
+  const options = {
+    title: "拡張機能の名称が変更されました",
+    detail: `新しい拡張機能「AutoREADME」がリリースされました。このままでは更新やサポートが受けられなくなるため、新しい拡張機能をインストールしてください。`,
+    buttons: [
+      {
+        title: "新しい拡張機能をインストール",
+        uri: vscode.Uri.parse(newExtensionUrl),
+      },
+    ],
+  };
+
+  vscode.window
+    .showInformationMessage(options.title, ...options.buttons)
+    .then((selection) => {
+      if (selection && selection.uri) {
+        vscode.env.openExternal(selection.uri);
+      }
+    });
+};
+/**
+ * 旧版の名前ではないかチェック
+ */
+export const checkOldExtension = () => {
+  if (packageName === "create-readme-openai") {
+    redirectToNewExtension();
   }
 };

@@ -1,9 +1,9 @@
 {
-  "name": "create-readme-openai",
+  "name": "auto-readme",
   "displayName": "AutoREADME(BETA)",
   "description": "ChatGPT automatically creates a README.",
-  "version": "0.2.5",
-  "icon": "readmeGPT-logo.png",
+  "version": "0.0.0",
+  "icon": "",
   "engines": {
     "vscode": "^1.77.0"
   },
@@ -32,7 +32,7 @@
       }
     ],
     "configuration": {
-      "title": "Create README OpenAI",
+      "title": "ChatGPT automatically creates a README.",
       "properties": {
         "create-readme-openai.apiKey": {
           "type": "string",
