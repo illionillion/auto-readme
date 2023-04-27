@@ -1,8 +1,8 @@
 {
   "name": "create-readme-openai",
-  "displayName": "readmeGPT(BETA)",
-  "description": "Create README By OpenAI",
-  "version": "0.2.4",
+  "displayName": "AutoREADME(BETA)",
+  "description": "ChatGPT automatically creates a README.",
+  "version": "0.2.5",
   "icon": "readmeGPT-logo.png",
   "engines": {
     "vscode": "^1.77.0"
