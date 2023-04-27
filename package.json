@@ -2,7 +2,7 @@
   "name": "auto-readme",
   "displayName": "AutoREADME(BETA)",
   "description": "ChatGPT automatically creates a README.",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "icon": "",
   "engines": {
     "vscode": "^1.77.0"
@@ -11,7 +11,7 @@
   "publisher": "CREATEME",
   "repository": {
     "type": "git",
-    "url": "https://github.com/illionillion/create-readme-openai.git"
+    "url": "https://github.com/illionillion/auto-readme.git"
   },
   "categories": [
     "Other"
