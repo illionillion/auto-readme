@@ -3,12 +3,16 @@ import { OpenAIApi } from "openai";
 import { create_readme } from "./commands/create-readme";
 import { set_api_key } from "./commands/set-api-key";
 import { ReadmeStatusBarItem } from "./commands/statusBarItem";
-import { checkOldExtension } from "./utils/utils";
+import { checkNewVersion, checkOldExtension } from "./utils/utils";
 
 let readmeStatusBarItem: ReadmeStatusBarItem;
 let openai: OpenAIApi | undefined = undefined;
-export function activate(context: vscode.ExtensionContext) {
-  checkOldExtension();
+export async function activate(context: vscode.ExtensionContext) {
+  
+  if(!checkOldExtension()) { // チェックして旧版でなければ、バージョン確認を行いたい
+    // ここでバージョン確認
+    await checkNewVersion()
+  };
 
   /**
    * README作成

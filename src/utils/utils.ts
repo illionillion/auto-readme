@@ -1,10 +1,13 @@
 import * as vscode from "vscode";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { ChatCompletionRequestMessageRoleEnum, OpenAIApi } from "openai";
 import { existsSync, readFileSync, readdirSync, statSync } from "fs";
 import { join } from "path";
 const jsonData = require("../../package.json");
-const packageName: string = jsonData.name; // 拡張機能の名前取得
+const extensionName: string = jsonData.name; // 拡張機能の名前取得
+const versionName: string = jsonData.version; // 拡張機能のバージョン取得
+const marketplaceUrl =
+  "https://marketplace.visualstudio.com/items?itemName=CREATEME.auto-readme";
 
 /**
  * 共通のモジュール
@@ -211,6 +214,11 @@ const macPattern = /^\/Users\/([^/]+)(.*)$/;
  */
 const linuxPattern = /^\/home\/([^/]+)(.*)$/;
 
+/**
+ * Macの時にユーザー名表示されないようにする
+ * @param path
+ * @returns
+ */
 export const removeUserName = (path: string) => {
   switch (process.platform) {
     case "win32":
@@ -224,6 +232,7 @@ export const removeUserName = (path: string) => {
       return path;
   }
 };
+
 /**
  * 新しい拡張機能へリダイレクト
  */
@@ -250,11 +259,46 @@ export const redirectToNewExtension = () => {
       }
     });
 };
+
 /**
  * 旧版の名前ではないかチェック
+ * @returns {boolean}
  */
-export const checkOldExtension = () => {
-  if (packageName === "create-readme-openai") {
+export const checkOldExtension = (): boolean => {
+  if (extensionName === "create-readme-openai") {
     redirectToNewExtension();
+    return true;
   }
+  return false;
+};
+
+/**
+ * バージョンアップの確認
+ * @param url
+ * @returns
+ */
+export const checkNewVersion = async (
+  url = marketplaceUrl
+): Promise<boolean> => {
+  const res = await axios.get(url);
+  const data = res.data;
+  const latestVersion: string = data.match(/"version":"([\d\.]+)"/)[1]; // バージョン取得
+
+  if (latestVersion !== versionName) {
+    // ここでバージョンアップの表示
+    const action = await vscode.window.showInformationMessage(
+      `Update available for '${extensionName}' extension.`,
+      "Update",
+      "Dismiss"
+    );
+    if (action === "Update") {
+      // 拡張機能の検索ページを開く
+      vscode.commands.executeCommand(
+        "workbench.extensions.search",
+        extensionName
+      );
+    }
+    return true;
+  }
+  return false;
 };
