@@ -233,7 +233,7 @@ export const redirectToNewExtension = () => {
 
   const options = {
     title: "拡張機能の名称が変更されました",
-    detail: `新しい拡張機能「AutoREADME」がリリースされました。このままでは更新やサポートが受けられなくなるため、新しい拡張機能をインストールしてください。`,
+    detail: `新しい拡張機能「AutoREADME」がリリースされました。このままでは更新やサポートが受けられなくなるため、現在ご使用の拡張機能「readmeGPT」をアインストールして、新しい拡張機能をインストールしてください。`,
     buttons: [
       {
         title: "新しい拡張機能をインストール",
