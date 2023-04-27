@@ -2,7 +2,7 @@
   "name": "auto-readme",
   "displayName": "AutoREADME(BETA)",
   "description": "ChatGPT automatically creates a README.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "icon": "",
   "engines": {
     "vscode": "^1.77.0"
@@ -32,7 +32,7 @@
       }
     ],
     "configuration": {
-      "title": "ChatGPT automatically creates a README.",
+      "title": "AutoREADME Settings",
       "properties": {
         "create-readme-openai.apiKey": {
           "type": "string",
@@ -47,6 +47,12 @@
             "gpt-3.5-turbo",
             "gpt-4"
           ]
+        },
+        "create-readme-openai.language": {
+          "type": "string",
+          "enum": ["English", "Japanese"],
+          "default": "Japanese",
+          "description": "Select the language to use."
         }
       }
     }

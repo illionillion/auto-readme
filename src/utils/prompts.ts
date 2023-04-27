@@ -1,7 +1,13 @@
+import * as vscode from "vscode";
+
 /**
  * プロンプト一覧
  * 新しいプロンプトを使う場合はここに作成して適宜インポートして使ってください。
  */
+
+const language = vscode.workspace
+.getConfiguration("create-readme-openai")
+.get("language") as string | undefined;
 
 /**
  * 普通にREADME作成
@@ -10,7 +16,7 @@
  * @returns
  */
 export const prompt_01 = (filecontent: string, tree: string) => {
-  return `Please make README of the following source code in Japanese.\nIf possible, also create a configuration diagram in MERMAID.(mermaid is written in English)\nsource code:\n${filecontent}\n\ndirectory configuration:\n${tree}`;
+  return `Please make README of the following source code in ${language}.\nIf possible, also create a configuration diagram in MERMAID.(mermaid is written in English)\nsource code:\n${filecontent}\n\ndirectory configuration:\n${tree}`;
 };
 
 /**
@@ -25,5 +31,5 @@ export const prompt_02 = (
   tree: string,
   pastFileContent: string
 ) => {
-  return `Please create a new README in Japanese using the following source code as a README reference.\nIf possible, also create a configuration diagram in MERMAID.(mermaid is written in English)\nREADME:\n${pastFileContent}\n\nsource code:\n${filecontent}\n\ndirectory configuration:\n${tree}`;
+  return `Please create a new README in ${language} using the following source code as a README reference.\nIf possible, also create a configuration diagram in MERMAID.(mermaid is written in English)\nREADME:\n${pastFileContent}\n\nsource code:\n${filecontent}\n\ndirectory configuration:\n${tree}`;
 };
