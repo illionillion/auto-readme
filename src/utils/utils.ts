@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import axios, { AxiosError } from "axios";
 import { ChatCompletionRequestMessageRoleEnum, OpenAIApi } from "openai";
 import { existsSync, readFileSync, readdirSync, statSync } from "fs";
-import { join } from "path";
+import { basename, join } from "path";
 const jsonData = require("../../package.json");
 const extensionName: string = jsonData.name; // 拡張機能の名前取得
 const versionName: string = jsonData.version; // 拡張機能のバージョン取得
@@ -89,26 +89,45 @@ interface TreeNode {
  * フォルダの配下のtreeを取得
  * @param path パス
  * @param ignores ignoreで除外されているもの
+ * @param depth 階層
+ * @param maxDepth 最大階層
  * @returns
  */
 export const readDirRecursive = (
   path: string,
-  ignores: string[] = []
+  ignores: string[] = [],
+  depth: number = 0,
+  maxDepth: number = 5
 ): TreeNode => {
-  const stats = statSync(path);
-
-  if (stats.isDirectory()) {
-    const folderName = path.split("\\").pop() as string;
-    const children = readdirSync(path)
-      .filter((child) => !/(^|\\)\.[^\\\.]/g.test(child)) // ドットで始まるフォルダを除外する
-      .filter((child) => ignores.indexOf(child) === -1) // ignoresに記載されたフォルダを除外する
-      .map((child) => readDirRecursive(join(path, child), ignores));
-
-    return { label: folderName, nodes: children };
-  } else {
-    return { label: path.split("\\").pop() as string };
+  try {
+    const stats = statSync(path);
+    if (stats.isDirectory()) {
+      const folderName = basename(path);
+      if (depth >= maxDepth) {
+        return { label: folderName };
+      } else {
+        const children = readdirSync(path)
+          .filter((child) => !/(^|\\)\.[^\\\.]/g.test(child))
+          .filter((child) => ignores.indexOf(child) === -1)
+          .map((child) =>
+            readDirRecursive(
+              join(path, child),
+              ignores,
+              depth + 1,
+              maxDepth
+            )
+          );
+        return { label: folderName, nodes: children };
+      }
+    } else {
+      return { label: basename(path) };
+    }
+  } catch (error) {
+    // ファイルにアクセスできない場合は、そのファイル名で終わるようにする
+    return { label: basename(path) };
   }
 };
+
 
 /**
  * gitignoreの内容取得
