@@ -10,7 +10,7 @@ export class ReadmeStatusBarItem {
     );
     this.statusBarItem.text = "$(file) Generate README";
     this.statusBarItem.tooltip = "Click to generate a README";
-    this.statusBarItem.command = "create-readme-openai.create-readme";
+    this.statusBarItem.command = "auto-readme.create-readme";
     this.statusBarItem.show();
   }
 

@@ -3,10 +3,10 @@ import axios, { AxiosError } from "axios";
 import { ChatCompletionRequestMessageRoleEnum, OpenAIApi } from "openai";
 import { existsSync, readFileSync, readdirSync, statSync } from "fs";
 import { basename, join } from "path";
-const jsonData = require("../../package.json");
-const extensionName: string = jsonData.name; // 拡張機能の名前取得
-const versionName: string = jsonData.version; // 拡張機能のバージョン取得
-const marketplaceUrl =
+export const jsonData = require("../../package.json");
+export const extensionName: string = jsonData.name; // 拡張機能の名前取得
+export const versionName: string = jsonData.version; // 拡張機能のバージョン取得
+export const marketplaceUrl =
   "https://marketplace.visualstudio.com/items?itemName=CREATEME.auto-readme";
 
 /**
@@ -28,9 +28,17 @@ export const isAxiosError = (error: unknown): error is AxiosError => {
  */
 export const save_api_key = async (yourKey: string) => {
   await vscode.workspace
-    .getConfiguration("create-readme-openai")
+    .getConfiguration("auto-readme")
     .update("apiKey", yourKey, vscode.ConfigurationTarget.Global);
   vscode.window.showInformationMessage("API Key saved to settings.");
+};
+
+/**
+ * APIキーの取得
+ * @returns
+ */
+export const get_api_key = async () => {
+  return await vscode.workspace.getConfiguration("auto-readme").get("apiKey") as string | undefined;
 };
 
 /**
@@ -110,12 +118,7 @@ export const readDirRecursive = (
           .filter((child) => !/(^|\\)\.[^\\\.]/g.test(child))
           .filter((child) => ignores.indexOf(child) === -1)
           .map((child) =>
-            readDirRecursive(
-              join(path, child),
-              ignores,
-              depth + 1,
-              maxDepth
-            )
+            readDirRecursive(join(path, child), ignores, depth + 1, maxDepth)
           );
         return { label: folderName, nodes: children };
       }
@@ -127,7 +130,6 @@ export const readDirRecursive = (
     return { label: basename(path) };
   }
 };
-
 
 /**
  * gitignoreの内容取得
@@ -320,4 +322,18 @@ export const checkNewVersion = async (
     return true;
   }
   return false;
+};
+
+/**
+ * 設定画面へリダイレクト
+ */
+export const redirectToSetting = async () => {
+  const result = await vscode.window.showInformationMessage(
+    "Do you want to open the Extension Name settings?",
+    "Open Settings",
+    "Cancel"
+  );
+  if (result === "Open Settings") {
+    vscode.commands.executeCommand('workbench.action.openSettings', extensionName);
+  }
 };

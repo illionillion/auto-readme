@@ -17,7 +17,7 @@ import { prompt_01, prompt_02 } from "../utils/prompts";
 export const create_readme = async (openai: OpenAIApi | undefined) => {
   // APIキーを設定から取得
   let yourKey = vscode.workspace
-    .getConfiguration("create-readme-openai")
+    .getConfiguration("auto-readme")
     .get("apiKey") as string | undefined;
 
   // APIキーが設定されていない場合、実行時に入力を求める
@@ -40,7 +40,7 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
 
   // モデル名を設定から取得
   let modelName = vscode.workspace
-    .getConfiguration("create-readme-openai")
+    .getConfiguration("auto-readme")
     .get("model") as string | undefined;
 
   // モデル名が設定されていない場合、実行時に選択を求める
@@ -73,7 +73,7 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
       // 選択されたモデル名を設定に保存する
       modelName = selectedModel.label;
       await vscode.workspace
-        .getConfiguration("create-readme-openai")
+        .getConfiguration("auto-readme")
         .update("model", modelName, vscode.ConfigurationTarget.Global);
 
       vscode.window.showInformationMessage(
