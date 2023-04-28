@@ -137,16 +137,17 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
   // ワークスペースのフォルダ取得
   const workspaceFolderPath = workspaceFolders[0].uri.fsPath;
   
-  // console.log(getGitignorePatterns(workspaceFolderPath));
+  const gitignores = getGitignorePatterns(workspaceFolderPath);
+  console.log(gitignores);
   // ツリーのルートを作成する
   const root = readDirRecursive(
     workspaceFolderPath,
-    getGitignorePatterns(workspaceFolderPath)
+    gitignores
   );
-  // console.log(root);
+  console.log(root);
   // アスキーアート出力
   const tree = printTree(root);
-  // console.log(tree);
+  console.log(tree);
 
   const filecontent = readFileSync(targetfilePath, "utf-8");
 
