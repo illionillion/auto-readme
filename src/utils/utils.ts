@@ -38,7 +38,9 @@ export const save_api_key = async (yourKey: string) => {
  * @returns
  */
 export const get_api_key = async () => {
-  return await vscode.workspace.getConfiguration("auto-readme").get("apiKey") as string | undefined;
+  return (await vscode.workspace
+    .getConfiguration("auto-readme")
+    .get("apiKey")) as string | undefined;
 };
 
 /**
@@ -334,6 +336,9 @@ export const redirectToSetting = async () => {
     "Cancel"
   );
   if (result === "Open Settings") {
-    vscode.commands.executeCommand('workbench.action.openSettings', extensionName);
+    vscode.commands.executeCommand(
+      "workbench.action.openSettings",
+      extensionName
+    );
   }
 };
