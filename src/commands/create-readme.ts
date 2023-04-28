@@ -128,8 +128,7 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
     `Selected file: ${removeUserName(targetfilePath)}`
   );
 
-  // ファイルの親フォルダ取得
-  const folderPath = targetfilePath.replace(/\/[^\/]*$/, "");
+  // ワークスペースのフォルダパス取得
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (!workspaceFolders || workspaceFolders.length === 0) {
     vscode.window.showErrorMessage("No workspace folder found.");
@@ -137,18 +136,17 @@ export const create_readme = async (openai: OpenAIApi | undefined) => {
   }
   // ワークスペースのフォルダ取得
   const workspaceFolderPath = workspaceFolders[0].uri.fsPath;
+  
+  // console.log(getGitignorePatterns(workspaceFolderPath));
   // ツリーのルートを作成する
-
-  console.log(getGitignorePatterns(workspaceFolderPath));
   const root = readDirRecursive(
     workspaceFolderPath,
     getGitignorePatterns(workspaceFolderPath)
   );
-  // const root = readDirRecursive(folderPath);
-  console.log(root);
+  // console.log(root);
   // アスキーアート出力
   const tree = printTree(root);
-  console.log(tree);
+  // console.log(tree);
 
   const filecontent = readFileSync(targetfilePath, "utf-8");
 
