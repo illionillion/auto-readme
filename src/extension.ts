@@ -3,22 +3,32 @@ import { OpenAIApi } from "openai";
 import { create_readme } from "./commands/create-readme";
 import { set_api_key } from "./commands/set-api-key";
 import { ReadmeStatusBarItem } from "./commands/statusBarItem";
-import { checkNewVersion, checkOldExtension } from "./utils/utils";
+import {
+  checkNewVersion,
+  checkOldExtension,
+  get_api_key,
+  redirectToSetting,
+} from "./utils/utils";
 
 let readmeStatusBarItem: ReadmeStatusBarItem;
 let openai: OpenAIApi | undefined = undefined;
 export async function activate(context: vscode.ExtensionContext) {
-  
-  if(!checkOldExtension()) { // チェックして旧版でなければ、バージョン確認を行いたい
+  if (!checkOldExtension()) {
+    // チェックして旧版でなければ、バージョン確認を行いたい
     // ここでバージョン確認
-    await checkNewVersion()
-  };
+    await checkNewVersion();
+  }
+
+  const get_key = await get_api_key(); // キーが設定されているか確認
+  if (get_key === "" || get_key === undefined) {
+    await redirectToSetting(); // されていなければ設定画面へ移動するか確認
+  }
 
   /**
    * README作成
    */
   const create = vscode.commands.registerCommand(
-    "create-readme-openai.create-readme",
+    "auto-readme.create-readme",
     async () => await create_readme(openai)
   );
 
@@ -26,7 +36,7 @@ export async function activate(context: vscode.ExtensionContext) {
    * APIキー設定
    */
   const setAPIKey = vscode.commands.registerCommand(
-    "create-readme-openai.set-api-key",
+    "auto-readme.set-api-key",
     set_api_key
   );
 

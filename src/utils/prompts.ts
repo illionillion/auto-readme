@@ -6,8 +6,8 @@ import * as vscode from "vscode";
  */
 
 const language = vscode.workspace
-.getConfiguration("create-readme-openai")
-.get("language") as string | undefined;
+  .getConfiguration("auto-readme")
+  .get("language") as string | undefined;
 
 /**
  * 普通にREADME作成

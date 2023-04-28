@@ -6,7 +6,7 @@ import * as vscode from "vscode";
  */
 export const set_api_key = async () => {
   const yourKey = await vscode.window.showInputBox({
-    prompt: "Enter your OpenAI API Key.",
+    prompt: "Enter your ChatGPT API Key.",
   });
   await save_api_key(yourKey ?? "");
 };
