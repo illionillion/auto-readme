@@ -2,8 +2,8 @@
   "name": "auto-readme",
   "displayName": "AutoREADME(BETA)",
   "description": "ChatGPT automatically creates a README.",
-  "version": "0.0.5",
-  "icon": "",
+  "version": "0.0.6",
+  "icon": "auto-readme-logo.png",
   "engines": {
     "vscode": "^1.77.0"
   },
