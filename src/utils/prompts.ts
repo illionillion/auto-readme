@@ -5,6 +5,9 @@ import * as vscode from "vscode";
  * 新しいプロンプトを使う場合はここに作成して適宜インポートして使ってください。
  */
 
+/**
+ * 言語
+ */
 const language = vscode.workspace
   .getConfiguration("auto-readme")
   .get("language") as string | undefined;

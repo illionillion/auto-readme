@@ -2,7 +2,7 @@
   "name": "auto-readme",
   "displayName": "AutoREADME(BETA)",
   "description": "ChatGPT automatically creates a README.",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "icon": "auto-readme-logo.png",
   "engines": {
     "vscode": "^1.77.0"
@@ -66,6 +66,7 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
+    "lint:fix": "eslint src --fix --ext ts",
     "test": "node ./out/test/runTest.js",
     "vsce:package": "vsce package"
   },
